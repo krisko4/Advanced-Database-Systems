@@ -1,0 +1,201 @@
+
+DROP TABLE IF EXISTS announcement;
+DROP TABLE IF EXISTS issue; 
+DROP TABLE IF EXISTS accomodation; 
+DROP TABLE IF EXISTS administration_worker; 
+DROP TABLE IF EXISTS doorkeeper; 
+DROP TABLE IF EXISTS payment; 
+DROP TABLE IF EXISTS student; 
+DROP TABLE IF EXISTS person; 
+DROP TABLE IF EXISTS room; 
+DROP TABLE IF EXISTS dormitory_administration_schedule; 
+DROP TABLE IF EXISTS dormitory; 
+DROP TABLE IF EXISTS administration_schedule; 
+DROP TABLE IF EXISTS working_day; 
+DROP TABLE IF EXISTS price_list; 
+DROP TABLE IF EXISTS degree_course; 
+DROP TABLE IF EXISTS department; 
+DROP TABLE IF EXISTS university; 
+DROP TABLE IF EXISTS address; 
+
+
+CREATE TABLE address
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    street VARCHAR(70) UNIQUE NOT NULL,
+    flat_number SMALLINT,
+    postcode VARCHAR(10) NOT NULL,
+    city varchar(50) NOT NULL,
+    country varchar(50) NOT NULL
+);
+
+
+CREATE TABLE university
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    name VARCHAR(150) NOT NULL UNIQUE,
+    address_id INT REFERENCES address(id) UNIQUE  NOT NULL
+);
+
+CREATE TABLE working_day
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    name VARCHAR(20) NOT NULL UNIQUE
+);
+
+CREATE TABLE administration_schedule
+(
+     id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+     working_day_id SMALLINT  REFERENCES working_day(id) NOT NULL,
+     start_hour TIME NOT NULL,
+     end_hour TIME NOT NULL
+);
+
+
+
+CREATE TABLE price_list
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    single DECIMAL(6, 2),
+    doubled DECIMAL(6, 2),
+    tripled DECIMAL(6, 2),
+    quadrupled DECIMAL(6, 2),
+    five DECIMAL(6, 2)
+);
+
+CREATE TABLE dormitory
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    address_id INT  REFERENCES address(id) UNIQUE NOT NULL,
+    university_id SMALLINT  REFERENCES university(id) NOT NULL,
+    price_list_id SMALLINT  REFERENCES price_list(id) NOT NULL,
+    user_id SMALLINT NOT NULL
+);
+
+CREATE TABLE dormitory_administration_schedule
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    dormitory_id SMALLINT NOT NULL  REFERENCES dormitory(id),
+    administration_schedule_id SMALLINT  REFERENCES administration_schedule(id) NOT NULL
+);
+
+
+
+CREATE TABLE department
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    university_id SMALLINT  REFERENCES university(id) NOT NULL
+);
+
+CREATE TABLE degree_course
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    department_id SMALLINT  REFERENCES department(id) NOT NULL
+);
+
+
+
+CREATE TABLE person
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    first_name VARCHAR(25) NOT NULL,
+    second_name VARCHAR(25),
+    last_name VARCHAR(50) NOT NULL,
+    pesel CHAR(11) UNIQUE NOT NULL,
+    address_id INT  REFERENCES address(id) NOT NULL
+);
+
+
+
+CREATE TABLE room
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    number varchar(10) NOT NULL,
+    capacity SMALLINT NOT NULL CHECK (capacity BETWEEN 1 and 5),
+    dormitory_id SMALLINT NOT NULL  REFERENCES dormitory(id)
+);
+
+
+CREATE TABLE student
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    term SMALLINT NOT NULL CHECK (term BETWEEN 1 AND 7),
+    degree_course_id SMALLINT  REFERENCES degree_course(id) NOT NULL,
+    person_id INT  REFERENCES person(id) UNIQUE NOT NULL,
+    room_id INT  REFERENCES room(id) NOT NULL
+   
+);
+
+
+CREATE TABLE payment
+(
+ id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+ date TIMESTAMP NOT NULL,
+ student_id INT  REFERENCES student(id) NOT NULL,
+ amount DECIMAL(6, 2) NOT NULL
+);
+
+
+CREATE TABLE doorkeeper
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    dormitory_id SMALLINT  REFERENCES dormitory(id) NOT NULL,
+    person_id INT UNIQUE  REFERENCES person(id) NOT NULL
+);
+
+CREATE TABLE accomodation
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    student_id INT  REFERENCES student(id) NOT NULL,
+    person_id INT  REFERENCES person(id) NOT NULL,
+    doorkeeper_id SMALLINT  REFERENCES doorkeeper(id) NOT NULL
+);
+
+CREATE TABLE issue
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    date TIMESTAMP NOT NULL,
+    content text NOT NULL,
+    student_id INT  REFERENCES student(id) NOT NULL,
+    doorkeeper_id SMALLINT REFERENCES doorkeeper(id) NOT NULL
+);
+
+CREATE TABLE administration_worker
+(
+    id SMALLINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    email VARCHAR(50) NOT NULL UNIQUE,
+    phone_number VARCHAR(20) NOT NULL,
+    dormitory_id SMALLINT REFERENCES dormitory(id) NOT NULL,
+    person_id INT UNIQUE  REFERENCES person(id) NOT NULL
+);
+
+CREATE TABLE announcement
+(
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1 INCREMENT BY 1),
+    date TIMESTAMP NOT NULL,
+    content TEXT NOT NULL,
+    administration_worker_id SMALLINT  REFERENCES administration_worker(id) NOT NULL
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
