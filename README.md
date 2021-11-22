@@ -1,6 +1,11 @@
 # Advanced Database Systems
 ## Chapter 2
-*Views, functions, procedures, transactions, triggers, jobs*
+-  views
+-  functions
+-  procedures
+-  transactions
+-  triggers
+-  jobs
 
 
 <p align="center">
