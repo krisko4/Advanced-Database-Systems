@@ -2,4 +2,13 @@
 
 ## MongoDB
 
-[ZSBD - projekt - MongoDB (2021).pdf](https://github.com/krisko4/Advanced-Database-Systems/files/7981301/ZSBD.-.projekt.-.MongoDB.2021.pdf)
+- indexes
+- functions
+- aggregations
+- embedded documents
+- references
+
+<p align="center">
+ <img src="https://user-images.githubusercontent.com/80395610/152034856-41ee4fb1-7909-45eb-ac0d-923997164464.JPG" > 
+  </p>
+
