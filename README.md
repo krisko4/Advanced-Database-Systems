@@ -12,6 +12,7 @@
 - aggregations
 - embedded documents
 - references
+- _mongoose_
 
 ## Task
 
